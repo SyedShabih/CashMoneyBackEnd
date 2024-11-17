@@ -10,4 +10,4 @@ const playerDataSchema = new Schema({
     lastEnergyTime: Date
 });
     
-    mongoose.model('PlayerData', playerDataSchema);
+mongoose.model('PlayerData', playerDataSchema);
