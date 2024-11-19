@@ -3,6 +3,14 @@ const keys = require('./config/keys.js');
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
+const { Bot } = require("grammy");
+
+// Create a bot object
+const bot = new Bot(keys.botToken);
+
+bot.on("message", (ctx) => ctx.reply("Hi there!"));
+
+bot.start();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
