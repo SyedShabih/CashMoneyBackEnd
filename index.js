@@ -34,10 +34,10 @@ app.listen(keys.port, () => {
   console.log(`Server is running on port ${keys.port}`);
 });
 
-server.listen(Number(keys.port), async () => {
-    console.log("Server is up and running!");
-    await bot.api.setWebhook(`${keys.domain}/${keys.botToken}`);
-});
+// server.listen(Number(keys.port), async () => {
+//     console.log("Server is up and running!");
+//     await bot.api.setWebhook(`${keys.domain}/${keys.botToken}`);
+// });
 
 bot.on("callback_query:game_short_name", async (ctx) => {
     const url = keys.gameURL;
