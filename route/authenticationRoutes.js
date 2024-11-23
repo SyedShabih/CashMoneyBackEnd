@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const PlayerData = mongoose.model('PlayerData');
 
 module.exports = app => {
-    
 
     app.post('/Login', async (req, res) => {
         const { rtelegramId } = req.body;
