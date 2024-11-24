@@ -9,8 +9,13 @@ const http = require('http');
 // Create a bot object
 const bot = new Bot(keys.botToken);
 
+// bot.on("message", (ctx) => {
+//   ctx.reply(`Check out our game: ${keys.gameURL}`);
+// });
+
 bot.on("message", (ctx) => {
-  ctx.reply(`Check out our game: ${keys.gameURL}`);
+  const keyboard = new InlineKeyboard().url("Play Game", keys.gameURL);
+  ctx.reply("Check out our game:", { reply_markup: keyboard });
 });
 
 bot.start();
