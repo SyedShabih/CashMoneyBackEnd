@@ -4,14 +4,9 @@ const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
 const { Bot, InlineKeyboard } = require("grammy");
-const http = require('http');
 
 // Create a bot object
 const bot = new Bot(keys.botToken);
-
-// bot.on("message", (ctx) => {
-//   ctx.reply(`Check out our game: ${keys.gameURL}`);
-// });
 
 bot.on("message", (ctx) => {
   const keyboard = new InlineKeyboard().game("Play Game");
@@ -48,15 +43,6 @@ app.get('/', (req, res) => {
 
 app.listen(keys.port, () => {
   console.log(`Server is running on port ${keys.port}`);
-});
-
-bot.on("callback_query:game_short_name", async (ctx) => {
-    const username = ctx.from.username || ctx.from.first_name;
-    console.log(`Link clicked by: ${username}`);
-    const url = keys.gameURL;
-    await ctx.answerCallbackQuery({
-        url
-    });
 });
 
 bot.catch((err) => console.error(err));
