@@ -14,8 +14,17 @@ const bot = new Bot(keys.botToken);
 // });
 
 bot.on("message", (ctx) => {
-  const keyboard = new InlineKeyboard().url("Play Game", keys.gameURL);
+  const keyboard = new InlineKeyboard().game("Play Game");
   ctx.reply("Check out our game:", { reply_markup: keyboard });
+});
+
+bot.on("callback_query:data", async (ctx) => {
+  if (ctx.callbackQuery.data === "play_game") {
+    const username = ctx.from.username || ctx.from.first_name;
+    console.log(`Link clicked by: ${username}`);
+    await ctx.answerCallbackQuery();
+    await ctx.replyWithGame(keys.gameShortName);
+  }
 });
 
 bot.start();
