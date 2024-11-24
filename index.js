@@ -5,6 +5,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const { Bot } = require("grammy");
 const http = require('http');
+const { Bot, InlineKeyboard } = require("grammy");
 
 // Create a bot object
 const bot = new Bot(keys.botToken);
