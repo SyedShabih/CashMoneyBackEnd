@@ -10,7 +10,6 @@ const http = require('http');
 const bot = new Bot(keys.botToken);
 
 bot.on("message", (ctx) => {
-  ctx.reply("Hi there!");
   ctx.reply(`Check out our game: ${keys.gameURL}`);
 });
 
