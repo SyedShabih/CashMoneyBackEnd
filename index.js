@@ -8,6 +8,13 @@ const { Bot, InlineKeyboard } = require("grammy");
 // Create a bot object
 const bot = new Bot(keys.botToken);
 
+// Set up webhook
+const webhookPath = `/webhook/${keys.botToken}`;
+bot.api.setWebhook(`${keys.domain}${webhookPath}`);
+
+// Middleware to handle webhook requests
+app.use(bot.webhookCallback(webhookPath));
+
 bot.on("message", (ctx) => {
   const keyboard = new InlineKeyboard().text("Play Game", "play_game");
   ctx.reply("Check out our game:", { reply_markup: keyboard });
@@ -22,19 +29,17 @@ bot.on("callback_query:data", async (ctx) => {
   }
 });
 
-bot.start();
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//Init DB
+// Init DB
 const mongoose = require('mongoose');
 mongoose.connect(keys.mongoURI).then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Failed to connect to MongoDB', err));
 
-//Init Model
+// Init Model
 require('./model/PlayerData');
 
-//Init Routes
+// Init Routes
 require('./route/authenticationRoutes')(app);
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
