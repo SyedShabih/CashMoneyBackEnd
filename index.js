@@ -22,21 +22,36 @@ bot.on("message", (ctx) => {
   ctx.reply("Check out our game:", { reply_markup: keyboard });
 });
 
-bot.on("callback_query:data", async (ctx) => {
-  console.log("Received a callback query");
-  if (ctx.callbackQuery.data === "play_game") {
-    const username = ctx.from.username || ctx.from.first_name;
-    console.log(`Link clicked by: ${username}`);
-    const url = keys.gameURL;
-    try {
-      await ctx.answerCallbackQuery({
-        url: url
-      });
-    } catch (err) {
-      console.error("Failed to answer callback query:", err);
-    }
-  }
+bot.command("start", async (ctx) => {
+  console.log("Received a Command");
+  const keyboard = new InlineKeyboard().text("Start Cash Money");
+    await ctx.replyWithGame("Cash_Money", { reply_markup: keyboard });
 });
+
+bot.on("callback_query:game_short_name", async (ctx) => {
+    //   const token = createToken(ctx.from.id.toString());
+    //   console.log("Token: " + token);
+    //   const url = `https://settle-mints-game.netlify.app/?token=${token}`;
+    const url = keys.gameURL;
+    await ctx.answerCallbackQuery({
+        url
+    });
+});
+// bot.on("callback_query:data", async (ctx) => {
+//   console.log("Received a callback query");
+//   if (ctx.callbackQuery.data === "play_game") {
+//     const username = ctx.from.username || ctx.from.first_name;
+//     console.log(`Link clicked by: ${username}`);
+//     const url = keys.gameURL;
+//     try {
+//       await ctx.answerCallbackQuery({
+//         url: url
+//       });
+//     } catch (err) {
+//       console.error("Failed to answer callback query:", err);
+//     }
+//   }
+// });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
