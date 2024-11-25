@@ -4,13 +4,12 @@ const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
 const { Bot, InlineKeyboard } = require("grammy");
-const http = require('http');
 
 // Create a bot object
 const bot = new Bot(keys.botToken);
 
 bot.on("message", (ctx) => {
-  const keyboard = new InlineKeyboard().game("Play Game");
+  const keyboard = new InlineKeyboard().text("Play Game", "play_game");
   ctx.reply("Check out our game:", { reply_markup: keyboard });
 });
 
