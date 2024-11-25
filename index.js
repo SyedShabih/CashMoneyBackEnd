@@ -3,7 +3,7 @@ const keys = require('./config/keys.js');
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
-const { Bot, InlineKeyboard } = require("grammy");
+const { Bot, InlineKeyboard, webhookCallback } = require("grammy");
 
 // Create a bot object
 const bot = new Bot(keys.botToken);
@@ -13,7 +13,7 @@ const webhookPath = `/webhook/${keys.botToken}`;
 bot.api.setWebhook(`${keys.domain}${webhookPath}`);
 
 // Middleware to handle webhook requests
-app.use(bot.webhookCallback(webhookPath));
+app.use(webhookPath, webhookCallback(bot, 'express'));
 
 bot.on("message", (ctx) => {
   const keyboard = new InlineKeyboard().text("Play Game", "play_game");
