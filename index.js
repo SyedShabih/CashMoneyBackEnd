@@ -16,11 +16,11 @@ bot.api.setWebhook(`${keys.domain}${webhookPath}`);
 app.use(express.json());
 app.use(webhookPath, webhookCallback(bot, 'express'));
 
-bot.on("message", (ctx) => {
-  console.log("Received a message");
-  const keyboard = new InlineKeyboard().text("Play Game", "play_game");
-  ctx.reply("Check out our game:", { reply_markup: keyboard });
-});
+// bot.on("message", (ctx) => {
+//   console.log("Received a message");
+//   const keyboard = new InlineKeyboard().text("Play Game", "play_game");
+//   ctx.reply("Check out our game:", { reply_markup: keyboard });
+// });
 
 bot.command("start", async (ctx) => {
   console.log("Received a Command");
