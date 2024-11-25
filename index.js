@@ -13,6 +13,7 @@ const webhookPath = `/webhook/${keys.botToken}`;
 bot.api.setWebhook(`${keys.domain}${webhookPath}`);
 
 // Middleware to handle webhook requests
+app.use(express.json());
 app.use(webhookPath, webhookCallback(bot, 'express'));
 
 bot.on("message", (ctx) => {
