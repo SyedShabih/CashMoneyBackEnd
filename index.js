@@ -17,16 +17,21 @@ app.use(express.json());
 app.use(webhookPath, webhookCallback(bot, 'express'));
 
 bot.on("message", (ctx) => {
+  console.log("Received a message");
   const keyboard = new InlineKeyboard().text("Play Game", "play_game");
   ctx.reply("Check out our game:", { reply_markup: keyboard });
 });
 
 bot.on("callback_query:data", async (ctx) => {
+  console.log("Received a callback query");
   if (ctx.callbackQuery.data === "play_game") {
     const username = ctx.from.username || ctx.from.first_name;
     console.log(`Link clicked by: ${username}`);
-    await ctx.answerCallbackQuery();
-    await ctx.replyWithGame(keys.gameShortName);
+    const url = keys.gameURL;
+    await ctx.answerCallbackQuery({
+        url
+    });
+    //await ctx.replyWithGame(keys.gameURL);
   }
 });
 
