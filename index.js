@@ -4,7 +4,6 @@ const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
 const { Bot, InlineKeyboard, webhookCallback } = require("grammy");
-const { createToken } = require("./jwt.js");
 
 // Create a bot object
 const bot = new Bot(keys.botToken);
