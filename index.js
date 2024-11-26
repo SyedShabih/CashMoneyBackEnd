@@ -6,11 +6,11 @@ const bodyParser = require('body-parser');
 const { Bot, InlineKeyboard, webhookCallback } = require("grammy");
 const http = require('http');
 
+const domain = String(process.env.DOMAIN);
+const secretPath = String(process.env.BOT_TOKEN);
 
 // Create a bot object
 const bot = new Bot(keys.botToken);
-// Set up webhook
-const webhookPath = `/webhook/${keys.botToken}`;
 
 // Add more detailed logging
 bot.catch((err) => {
@@ -20,7 +20,7 @@ bot.catch((err) => {
 
 // Middleware to handle webhook requests
 app.use(express.json());
-app.use(webhookPath, webhookCallback(bot, 'express'));
+app.use(`/${secretPath}`, webhookCallback(bot, "express"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
@@ -28,22 +28,15 @@ console.log("Bot initialized with token:", token);
 
 
 const server = http.createServer(app);
-
-server.listen(keys.port, async () => {
-  console.log(`Server running on port ${keys.port}`);
-  
-  try {
-    // Set webhook
-    await bot.api.setWebhook(`${keys.domain}${webhookPath}`);
-    console.log(`Webhook set to ${keys.domain}${webhookPath}`);
-    
-    // Initialize bot
-    await initBot();
-    console.log("Bot setup completed");
-  } catch (err) {
-    console.error("Failed to set webhook:", err);
-    process.exit(1);
-  }
+// Start the server
+server.listen(Number(process.env.PORT), async () => {
+    console.log("Server is up and running!");
+    try {
+        await bot.api.setWebhook(`${domain}/${secretPath}`);
+        console.log(`Webhook set to ${domain}/${secretPath}`);
+    } catch (err) {
+        console.error("Failed to set webhook:", err);
+    }
 });
 
 // Init DB
