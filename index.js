@@ -4,13 +4,13 @@ const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
 const { Bot, InlineKeyboard, webhookCallback } = require("grammy");
+const { createToken } = require("./jwt.js");
 
 // Create a bot object
 const bot = new Bot(keys.botToken);
 
 // Set up webhook
 const webhookPath = `/webhook/${keys.botToken}`;
-bot.api.setWebhook(`${keys.domain}${webhookPath}`);
 
 // Middleware to handle webhook requests
 app.use(express.json());
@@ -27,13 +27,11 @@ bot.on("callback_query:data", async (ctx) => {
   if (ctx.callbackQuery.data === "play_game") {
     const username = ctx.from.username || ctx.from.first_name;
     console.log(`Link clicked by: ${username}`);
-    const url = keys.gameURL;
     try {
-      await ctx.answerCallbackQuery({
-        url: url
-      });
+      await ctx.answerCallbackQuery(); // Answer the callback query
+      await ctx.replyWithGame(keys.gameShortName); // Send the game using the game short name
     } catch (err) {
-      console.error("Failed to answer callback query:", err);
+      console.error("Failed to answer callback query or send game link:", err);
     }
   }
 });
@@ -55,8 +53,9 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(keys.port, () => {
+app.listen(keys.port, async () => {
   console.log(`Server is running on port ${keys.port}`);
+  await bot.api.setWebhook(`${keys.domain}${webhookPath}`);
 });
 
 bot.catch((err) => console.error(err));
