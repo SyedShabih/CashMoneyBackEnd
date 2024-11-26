@@ -8,14 +8,10 @@ const http = require('http');
 
 const domain = String(process.env.DOMAIN);
 const secretPath = String(process.env.BOT_TOKEN);
+const token = process.env.BOT_TOKEN;
 
 // Create a bot object
-const bot = new Bot(keys.botToken);
-
-// Add more detailed logging
-bot.catch((err) => {
-  console.error("Bot error:", err);
-});
+const bot = new Bot(token);
 
 
 // Middleware to handle webhook requests
@@ -28,16 +24,6 @@ console.log("Bot initialized with token:", token);
 
 
 const server = http.createServer(app);
-// Start the server
-server.listen(Number(process.env.PORT), async () => {
-    console.log("Server is up and running!");
-    try {
-        await bot.api.setWebhook(`${domain}/${secretPath}`);
-        console.log(`Webhook set to ${domain}/${secretPath}`);
-    } catch (err) {
-        console.error("Failed to set webhook:", err);
-    }
-});
 
 // Init DB
 const mongoose = require('mongoose');
@@ -78,6 +64,18 @@ bot.on("callback_query:game_short_name", async (ctx) => {
         console.error("Error answering callback query:", err);
     }
 });
+
+// Start the server
+server.listen(Number(process.env.PORT), async () => {
+    console.log("Server is up and running!");
+    try {
+        await bot.api.setWebhook(`${domain}/${secretPath}`);
+        console.log(`Webhook set to ${domain}/${secretPath}`);
+    } catch (err) {
+        console.error("Failed to set webhook:", err);
+    }
+});
+
 
 bot.catch((err) => {
     console.error("Bot error:", err);
