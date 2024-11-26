@@ -24,8 +24,8 @@ app.get("/", (req, res) => {
 server.listen(Number(process.env.PORT), async () => {
     console.log("Server is up and running!");
     try {
-        await bot.api.setWebhook(`${domain}/webhook/${secretPath}`);
-        console.log(`Webhook set to ${domain}/webhook/${secretPath}`);
+        await bot.api.setWebhook(`${domain}/${secretPath}`);
+        console.log(`Webhook set to ${domain}/${secretPath}`);
     } catch (err) {
         console.error("Failed to set webhook:", err);
     }

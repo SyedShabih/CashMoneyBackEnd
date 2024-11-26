@@ -34,3 +34,5 @@ bot.on("callback_query:game_short_name", async (ctx) => {
 bot.catch((err) => {
     console.error("Bot error:", err);
 });
+
+console.log("Bot initialized with token:", token);
