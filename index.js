@@ -28,7 +28,8 @@ async function initBot() {
     bot.on("message", async (ctx) => {
       console.log("Received message from:", ctx.from.username);
       try {
-        const keyboard = new InlineKeyboard().game("Play Cash Money", keys.gameShortName);
+        // Make sure gameShortName is passed correctly
+        const keyboard = new InlineKeyboard().text("Play Cash Money").game(keys.gameShortName);
         await ctx.reply("Check out our game:", { reply_markup: keyboard });
         console.log("Sent game button to user");
       } catch (err) {
@@ -41,8 +42,7 @@ async function initBot() {
       console.log("Game callback from:", ctx.from.username);
       try {
         await ctx.answerCallbackQuery({
-          url: keys.gameURL,
-          game_short_name: ctx.callbackQuery.game_short_name
+          url: keys.gameURL
         });
         console.log("Answered callback query with game URL");
       } catch (err) {
