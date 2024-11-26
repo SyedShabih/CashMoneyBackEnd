@@ -27,8 +27,14 @@ bot.on("callback_query:data", async (ctx) => {
   if (ctx.callbackQuery.data === "play_game") {
     const username = ctx.from.username || ctx.from.first_name;
     console.log(`Link clicked by: ${username}`);
-    await ctx.answerCallbackQuery();
-    await ctx.replyWithGame(keys.gameShortName);
+    const url = keys.gameURL;
+    try {
+      await ctx.answerCallbackQuery({
+        url: url
+      });
+    } catch (err) {
+      console.error("Failed to answer callback query:", err);
+    }
   }
 });
 
