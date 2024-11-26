@@ -6,8 +6,8 @@ const bodyParser = require('body-parser');
 const { Bot, InlineKeyboard, webhookCallback } = require("grammy");
 const http = require('http');
 
-const domain = String(process.env.DOMAIN);
-const secretPath = String(process.env.BOT_TOKEN);
+const domain = String(keys.domain);
+const secretPath = String(keys.botToken);
 const token = process.env.BOT_TOKEN;
 
 // Create a bot object
@@ -43,7 +43,8 @@ app.get('/', (req, res) => {
 const keyboard = new InlineKeyboard().game("Start Cash Money");
 
 bot.command("start", async (ctx) => {
-    console.log("Received /start command from:", ctx.from.username);
+    const username = ctx.from.username || ctx.from.first_name;
+    console.log("Received /start command from:", username);
     try {
         await ctx.replyWithGame(process.env.GAME_SHORT_NAME, { reply_markup: keyboard });
         console.log("Sent game button to user");
