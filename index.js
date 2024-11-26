@@ -20,8 +20,8 @@ const server = http.createServer(app);
 
 bot.on("message", (ctx) => {
   console.log("Received a message");
-  // Create a game button instead of a regular button
-  const keyboard = new InlineKeyboard().game("Play Cash Money");
+  // Create game button with proper game short name
+  const keyboard = new InlineKeyboard().game("Play Cash Money", keys.gameShortName);
   ctx.reply("Check out our game:", { reply_markup: keyboard });
 });
 
@@ -32,7 +32,8 @@ bot.on("callback_query:game_short_name", async (ctx) => {
     const username = ctx.from.username || ctx.from.first_name;
     console.log(`Game launched by: ${username}`);
     await ctx.answerCallbackQuery({
-      url: keys.gameURL
+      url: keys.gameURL,
+      game_short_name: ctx.callbackQuery.game_short_name // Add this
     });
   } catch (err) {
     console.error("Failed to answer game callback query:", err);
