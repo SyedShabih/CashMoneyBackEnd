@@ -29,11 +29,13 @@ bot.on("callback_query:data", async (ctx) => {
   if (ctx.callbackQuery.data === "play_game") {
     const username = ctx.from.username || ctx.from.first_name;
     console.log(`Link clicked by: ${username}`);
+    const url = keys.gameURL;
     try {
-      await ctx.answerCallbackQuery(); // Answer the callback query
-      await ctx.replyWithGame(keys.gameShortName); // Send the game using the game short name
+      await ctx.answerCallbackQuery({
+        url,
+      });
     } catch (err) {
-      console.error("Failed to answer callback query or send game link:", err);
+      console.error("Failed to answer callback query:", err);
     }
   }
 });
@@ -58,6 +60,7 @@ app.get('/', (req, res) => {
 server.listen(keys.port, async () => {
   console.log(`Server is running on port ${keys.port}`);
   await bot.api.setWebhook(`${keys.domain}${webhookPath}`);
+  console.log(`WebHook is set to ${keys.domain}${webhookPath}`);
 });
 
 bot.catch((err) => console.error(err));
