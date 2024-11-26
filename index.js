@@ -4,16 +4,19 @@ const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
 const { Bot, InlineKeyboard, webhookCallback } = require("grammy");
+const http = require('http');
+
 
 // Create a bot object
 const bot = new Bot(keys.botToken);
-
 // Set up webhook
 const webhookPath = `/webhook/${keys.botToken}`;
 
 // Middleware to handle webhook requests
 app.use(express.json());
 app.use(webhookPath, webhookCallback(bot, 'express'));
+
+const server = http.createServer(app);
 
 bot.on("message", (ctx) => {
   console.log("Received a message");
@@ -52,7 +55,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(keys.port, async () => {
+server.listen(keys.port, async () => {
   console.log(`Server is running on port ${keys.port}`);
   await bot.api.setWebhook(`${keys.domain}${webhookPath}`);
 });
