@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 const keyboard = new InlineKeyboard().game("Start Cash Money");
 
 bot.command("start", async (ctx) => {
-    const username = ctx.from.username || ctx.from.first_name;
+    const username = ctx.from.id+" "+ctx.from.first_name;
     console.log("Received /start command from:", username);
     try {
         await ctx.replyWithGame(process.env.GAME_SHORT_NAME, { reply_markup: keyboard });
@@ -54,7 +54,7 @@ bot.command("start", async (ctx) => {
 });
 
 bot.on("callback_query:game_short_name", async (ctx) => {
-    console.log("Received game callback query from:", ctx.from.username);
+    console.log("Received game callback query from:", ctx.from.id);
     const url = process.env.GAME_URL;
     try {
         await ctx.answerCallbackQuery({
