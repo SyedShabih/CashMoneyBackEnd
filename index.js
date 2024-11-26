@@ -17,50 +17,14 @@ bot.catch((err) => {
   console.error("Bot error:", err);
 });
 
-// Initialize bot before setting handlers
-async function initBot() {
-  try {
-    // Test bot connection
-    const botInfo = await bot.api.getMe();
-    console.log("Bot initialized:", botInfo.username);
-
-    // Set up message handler
-    bot.on("message", async (ctx) => {
-      console.log("Received message from:", ctx.from.username);
-      try {
-        // Make sure gameShortName is passed correctly
-        const keyboard = new InlineKeyboard().text("Play Cash Money").game(keys.gameShortName);
-        await ctx.reply("Check out our game:", { reply_markup: keyboard });
-        console.log("Sent game button to user");
-      } catch (err) {
-        console.error("Error sending game button:", err);
-      }
-    });
-
-    // Handle game callback
-    bot.on("callback_query:game_short_name", async (ctx) => {
-      console.log("Game callback from:", ctx.from.username);
-      try {
-        await ctx.answerCallbackQuery({
-          url: keys.gameURL
-        });
-        console.log("Answered callback query with game URL");
-      } catch (err) {
-        console.error("Game callback error:", err);
-      }
-    });
-
-  } catch (err) {
-    console.error("Bot initialization failed:", err);
-    process.exit(1);
-  }
-}
-
 
 // Middleware to handle webhook requests
 app.use(express.json());
 app.use(webhookPath, webhookCallback(bot, 'express'));
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
+console.log("Bot initialized with token:", token);
 
 
 const server = http.createServer(app);
@@ -82,29 +46,6 @@ server.listen(keys.port, async () => {
   }
 });
 
-
-bot.on("message", (ctx) => {
-  console.log("Received a message");
-  // Create game button with proper game short name
-  const keyboard = new InlineKeyboard().game("Play Cash Money", keys.gameShortName);
-  ctx.reply("Check out our game:", { reply_markup: keyboard });
-});
-
-// Handle game callback query
-bot.on("callback_query:game_short_name", async (ctx) => {
-  console.log("Received a game callback query");
-  try {
-    const username = ctx.from.username || ctx.from.first_name;
-    console.log(`Game launched by: ${username}`);
-    await ctx.answerCallbackQuery({
-      url: keys.gameURL,
-      game_short_name: ctx.callbackQuery.game_short_name // Add this
-    });
-  } catch (err) {
-    console.error("Failed to answer game callback query:", err);
-  }
-});
-
 // Init DB
 const mongoose = require('mongoose');
 mongoose.connect(keys.mongoURI).then(() => console.log('Connected to MongoDB'))
@@ -118,4 +59,33 @@ require('./route/authenticationRoutes')(app);
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+const keyboard = new InlineKeyboard().game("Start Cash Money");
+
+bot.command("start", async (ctx) => {
+    console.log("Received /start command from:", ctx.from.username);
+    try {
+        await ctx.replyWithGame(process.env.GAME_SHORT_NAME, { reply_markup: keyboard });
+        console.log("Sent game button to user");
+    } catch (err) {
+        console.error("Error sending game button:", err);
+    }
+});
+
+bot.on("callback_query:game_short_name", async (ctx) => {
+    console.log("Received game callback query from:", ctx.from.username);
+    const url = process.env.GAME_URL;
+    try {
+        await ctx.answerCallbackQuery({
+            url
+        });
+        console.log("Answered callback query with game URL");
+    } catch (err) {
+        console.error("Error answering callback query:", err);
+    }
+});
+
+bot.catch((err) => {
+    console.error("Bot error:", err);
 });
