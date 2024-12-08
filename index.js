@@ -13,6 +13,9 @@ const token = process.env.BOT_TOKEN;
 // Create a bot object
 const bot = new Bot(token);
 
+let savedTelegramId = null;
+let savedUsername = null;
+
 
 // Middleware to handle webhook requests
 app.use(express.json());
@@ -54,7 +57,13 @@ bot.command("start", async (ctx) => {
 });
 
 bot.on("callback_query:game_short_name", async (ctx) => {
-    console.log("Received game callback query from:", ctx.from.id);
+    const username = ctx.from.username || ctx.from.first_name;
+    const rtelegramId = ctx.from.id;
+    console.log("Received game callback query from:", username);
+
+    // Save the telegramId and username
+    savedTelegramId = rtelegramId;
+    savedUsername = username;
     const url = process.env.GAME_URL;
     try {
         await ctx.answerCallbackQuery({
@@ -63,6 +72,15 @@ bot.on("callback_query:game_short_name", async (ctx) => {
         console.log("Answered callback query with game URL");
     } catch (err) {
         console.error("Error answering callback query:", err);
+    }
+});
+
+// Endpoint to get the saved telegramId
+app.post('/getTelegramId', (req, res) => {
+    if (savedTelegramId) {
+        res.json({ rtelegramId: savedTelegramId, username: savedUsername });
+    } else {
+        res.status(404).send("No telegramId found");
     }
 });
 

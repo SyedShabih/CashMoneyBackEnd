@@ -4,5 +4,6 @@ module.exports = {
     botToken: process.env.BOT_TOKEN,
     gameURL: process.env.GAME_URL,
     domain: process.env.DOMAIN,
-    gameShortName: process.env.GAME_SHORT_NAME
+    gameShortName: process.env.GAME_SHORT_NAME,
+    node_env : process.env.NODE_ENV
 };
