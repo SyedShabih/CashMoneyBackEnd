@@ -74,13 +74,15 @@ module.exports = app => {
     });
 
     app.post('/UpdatePlayerData', async (req, res) => {
-  const { rtelegramId, ...updateData } = req.body;
-  if (!rtelegramId) {
+  const { telegramId, ...updateData } = req.body;
+        if (!telegramId) {
+      console.log(`Invalid data received: ${req.body}`);
     return res.status(400).send("Invalid Data");
   }
 
-  const playerData = await PlayerData.findOne({ telegramId: rtelegramId });
+  const playerData = await PlayerData.findOne({ telegramId: telegramId });
   if (!playerData) {
+      console.log(`Data not found`);
     return res.status(400).send("Player not found");
   } else {
     // Update all fields except telegramId and userName
@@ -89,11 +91,11 @@ module.exports = app => {
         playerData[key] = updateData[key];
       }
     });
-    await playerData.save();
+      await playerData.save();
+      
+      console.log(`Data Updated`);
     res.send(playerData);
   }
-
-  console.log(`Updated data for ${rtelegramId}`);
 });
     
 };
