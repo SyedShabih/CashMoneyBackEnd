@@ -6,7 +6,7 @@ const PlayerData = mongoose.model('PlayerData');
 module.exports = app => {
 
     app.post('/Login', async (req, res) => {
-        const { rtelegramId } = req.body;
+        const { rtelegramId,rUserName } = req.body;
         if (!rtelegramId) {
             return res.status(400).send("Invalid Data");
         }
@@ -17,11 +17,13 @@ module.exports = app => {
 
             const newPlayerData = new PlayerData({
                 telegramId: rtelegramId,
+                telegramUserName: rUserName,
                 coins: 0,
                 shields: 0,
                 village: 1,
                 buildingLevel: [0, 0, 0],
-                lastEnergyTime: Date.now()
+                lastEnergyTime: new Date().toISOString(),
+                lastEnergy: 40
             });
             await newPlayerData.save();
             res.send(`New Account Added ${newPlayerData}`);
@@ -70,5 +72,28 @@ module.exports = app => {
 
         console.log(rtelegramId, rshields);
     });
+
+    app.post('/UpdatePlayerData', async (req, res) => {
+  const { rtelegramId, ...updateData } = req.body;
+  if (!rtelegramId) {
+    return res.status(400).send("Invalid Data");
+  }
+
+  const playerData = await PlayerData.findOne({ telegramId: rtelegramId });
+  if (!playerData) {
+    return res.status(400).send("Player not found");
+  } else {
+    // Update all fields except telegramId and userName
+    Object.keys(updateData).forEach(key => {
+      if (key !== 'telegramId' && key !== 'telegramUserName') {
+        playerData[key] = updateData[key];
+      }
+    });
+    await playerData.save();
+    res.send(playerData);
+  }
+
+  console.log(`Updated data for ${rtelegramId}`);
+});
     
 };
