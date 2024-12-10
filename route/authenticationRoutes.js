@@ -143,8 +143,7 @@ module.exports = app => {
 
     app.get('/GetServerTime', (req, res) => {
         const serverTime = new Date().toISOString(); // Use ISO string format
-        res.send({ serverTime });
-
+        res.send(serverTime);
         console.log(`Retrieved server time: ${serverTime}`);
     });
 
