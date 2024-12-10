@@ -134,7 +134,6 @@ module.exports = app => {
                 res.send(playerData.lastEnergyTime);
             }
 
-            console.log(`Retrieved lastEnergyTime for ${rtelegramId}`);
         } catch (error) {
             console.error(`Error retrieving lastEnergyTime for ${rtelegramId}:`, error);
             res.status(500).send("Internal Server Error");
@@ -144,7 +143,33 @@ module.exports = app => {
     app.get('/GetServerTime', (req, res) => {
         const serverTime = new Date().toISOString(); // Use ISO string format
         res.send(serverTime);
-        console.log(`Retrieved server time: ${serverTime}`);
+    });
+
+    app.post('/GetPlayerToAttack', async (req, res) => {
+        const { rtelegramId } = req.body;
+        if (!rtelegramId) {
+            return res.status(400).send("Invalid Data");
+        }
+
+        try {
+            const playerData = await PlayerData.findOne({ telegramId: rtelegramId });
+            if (!playerData) {
+                return res.status(400).send("Player not found");
+            } else {
+                const randomPlayer = await PlayerData.aggregate([
+                    { $match: { telegramId: { $ne: rtelegramId } } }, // Exclude the requesting player
+                    { $sample: { size: 1 } }
+                ]);
+                if (randomPlayer.length === 0) {
+                    return res.status(404).send("No other players found");
+                }
+                res.send(randomPlayer[0]);
+            }
+
+        } catch (error) {
+            console.error(`Error retrieving random player to attack for ${rtelegramId}:`, error);
+            res.status(500).send("Internal Server Error");
+        }
     });
 
 };
